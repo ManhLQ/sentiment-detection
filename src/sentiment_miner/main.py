@@ -49,6 +49,12 @@ def create_parser() -> argparse.ArgumentParser:
         help="Limit number of rows to process (for testing)"
     )
     
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show DSPy prompt history for each processed row"
+    )
+    
     return parser
 
 
@@ -155,8 +161,12 @@ def main() -> int:
         console.print(f"[green]✓[/green] Loaded {len(texts)} rows from column '{args.column}'\n")
         
         # Process
-        results = analyze_feedback_batch(texts, show_progress=True)
-        console.print()  # New line after progress bar
+        results = analyze_feedback_batch(
+            texts, 
+            show_progress=not args.debug,  # Hide progress bar if debugging to avoid mess
+            debug=args.debug
+        )
+        console.print()  # New line after progress bar or debug output
         
         # Display detailed results table
         display_results_table(results, console)

@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
+import dspy
 from tqdm import tqdm
 
 from .signatures import FeedbackAnalyzer
@@ -20,7 +21,8 @@ class AnalysisResult:
 
 def analyze_feedback_batch(
     texts: List[str],
-    show_progress: bool = True
+    show_progress: bool = True,
+    debug: bool = False
 ) -> List[AnalysisResult]:
     """
     Analyze a batch of customer feedback texts.
@@ -28,6 +30,7 @@ def analyze_feedback_batch(
     Args:
         texts: List of feedback texts to analyze
         show_progress: Whether to show a progress bar (default: True)
+        debug: Whether to show DSPy prompt history (default: False)
         
     Returns:
         List of AnalysisResult objects
@@ -48,6 +51,10 @@ def analyze_feedback_batch(
         
         try:
             prediction = analyzer(text=text)
+            
+            if debug:
+                dspy.inspect_history(n=1)
+                
             result = AnalysisResult(
                 original_text=text,
                 sentiment=prediction.sentiment,
