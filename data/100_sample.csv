@@ -1,0 +1,102 @@
+Comment,CustomerID,Date
+"Great product, fast delivery 👍",C001,2025-01-01
+"Quality is good for the price",C002,2025-01-01
+"Shipping was a bit slow but acceptable",C003,2025-01-02
+"Excellent packaging and condition",C004,2025-01-02
+"Customer service was very helpful 😊",C005,2025-01-03
+"Average quality, nothing special",C006,2025-01-03
+"Not worth the money",C007,2025-01-04
+"Fast delivery, will buy again",C008,2025-01-04
+"Product arrived damaged 😞",C009,2025-01-05
+"Five stars, very satisfied!",C010,2025-01-05
+"Sản phẩm rất tốt, đúng như mô tả",C011,2025-01-06
+"Giao hàng nhanh, đóng gói cẩn thận 👍",C012,2025-01-06
+"Giá hơi cao so với thị trường",C013,2025-01-07
+"Chất lượng ổn trong tầm giá",C014,2025-01-07
+"Không hài lòng với dịch vụ",C015,2025-01-08
+"Sản phẩm bị trầy xước nhẹ",C016,2025-01-08
+"Shop hỗ trợ rất nhiệt tình 😊",C017,2025-01-09
+"Giao hàng hơi chậm",C018,2025-01-09
+"Đáng tiền, sẽ ủng hộ tiếp",C019,2025-01-10
+"Đóng gói sơ sài",C020,2025-01-10
+"配送が速くて助かりました",C021,2025-01-11
+"品質がとても良いです",C022,2025-01-11
+"価格に対して満足です 😊",C023,2025-01-12
+"梱包が少し雑でした",C024,2025-01-12
+"商品が説明と違いました",C025,2025-01-13
+"また購入したいです",C026,2025-01-13
+"対応が早くて良かった",C027,2025-01-14
+"少し高いと感じました",C028,2025-01-14
+"全体的に普通です",C029,2025-01-15
+"初期不良がありました 😞",C030,2025-01-15
+"Giá hơi cao nhưng quality rất tốt 👍",C031,2025-01-16
+"Giao hàng nhanh, very satisfied",C032,2025-01-16
+"Sản phẩm đẹp, packaging chắc chắn",C033,2025-01-17
+"Chất lượng ok, but ship hơi lâu",C034,2025-01-17
+"Đáng tiền, good value for money",C035,2025-01-18
+"Shop support nhanh, rất professional 😊",C036,2025-01-18
+"Sản phẩm dùng ổn, nothing special",C037,2025-01-19
+"Thiết kế đẹp nhưng price hơi cao",C038,2025-01-19
+"Giao hàng trễ nhưng service ổn",C039,2025-01-20
+"Will buy again vì chất lượng tốt",C040,2025-01-20
+
+"配送が速いし quality も良い 👍",C041,2025-01-21
+"価格は高めだけど worth it",C042,2025-01-21
+"梱包はきれいで good condition",C043,2025-01-22
+"商品は良いが shipping が遅い",C044,2025-01-22
+"品質が安定していて安心",C045,2025-01-23
+"デザインが nice です 😊",C046,2025-01-23
+"対応は good だと思います",C047,2025-01-24
+"説明と少し違う product",C048,2025-01-24
+"また order したいです",C049,2025-01-25
+"初回としては good experience",C050,2025-01-25
+"Fast shipping and good price",C051,2025-01-26
+"Product feels premium ✨",C052,2025-01-26
+"Customer support needs improvement",C053,2025-01-27
+"Very happy with this purchase 😊",C054,2025-01-27
+"Not as described, disappointed",C055,2025-01-28
+"Sản phẩm ổn, dùng lâu mới biết",C056,2025-01-28
+"Giá tốt, giao hàng nhanh",C057,2025-01-29
+"Không giống hình quảng cáo 😕",C058,2025-01-29
+"Shop đóng gói rất kỹ",C059,2025-01-30
+"Sẽ giới thiệu cho bạn bè",C060,2025-01-30
+"全体的に満足です",C061,2025-01-31
+"品質はまあまあです",C062,2025-01-31
+"対応が少し遅い",C063,2025-02-01
+"コスパが良いと思います",C064,2025-02-01
+"また利用したいです 👍",C065,2025-02-02
+"Giá cao nhưng quality xứng đáng 😊",C066,2025-02-02
+"Sản phẩm ok, delivery hơi chậm",C067,2025-02-03
+"Good product, shop hỗ trợ tốt",C068,2025-02-03
+"Packaging đẹp, very professional",C069,2025-02-04
+"Sẽ mua lại nếu có sale",C070,2025-02-04
+"配送は早いが price が高い",C071,2025-02-05
+"品質 good, 満足しています",C072,2025-02-05
+"少し残念 but service is ok",C073,2025-02-06
+"商品は nice, また買う",C074,2025-02-06
+"トータルで good experience 😊",C075,2025-02-07
+"Great deal during promotion",C076,2025-02-07
+"Shipping was super fast 🚀",C077,2025-02-08
+"Bad packaging, product ok",C078,2025-02-08
+"Love it! Best buy ❤️",C079,2025-02-09
+"Would not recommend this seller",C080,2025-02-09
+"Sản phẩm chất lượng cao",C081,2025-02-10
+"Giao hàng đúng hẹn 👍",C082,2025-02-10
+"Không hài lòng lắm về dịch vụ",C083,2025-02-11
+"Giá ổn, chất lượng ổn",C084,2025-02-11
+"Sản phẩm dùng tạm được",C085,2025-02-12
+"配送が少し遅れました",C086,2025-02-12
+"品質は期待通り",C087,2025-02-13
+"梱包が丁寧でした 😊",C088,2025-02-13
+"コスパは普通です",C089,2025-02-14
+"問題なく使えています",C090,2025-02-14
+"Giá hơi cao nhưng worth buying",C091,2025-02-15
+"Sản phẩm đẹp, looks premium",C092,2025-02-15
+"Good service nhưng giao hàng chậm",C093,2025-02-16
+"Shop phản hồi nhanh, very nice",C094,2025-02-16
+"Overall satisfied với purchase",C095,2025-02-17
+"配送が早くて happy 😊",C096,2025-02-17
+"商品 quality が高い",C097,2025-02-18
+"価格は高い but acceptable",C098,2025-02-18
+"また order したいです 👍",C099,2025-02-19
+"Good ecommerce experience overall",C100,2025-02-19

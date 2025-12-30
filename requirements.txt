@@ -1,0 +1,10 @@
+# Core dependencies
+dspy>=2.5.0
+pandas>=2.0.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+rich>=13.0.0
+
+# Development dependencies (optional)
+pytest>=7.0.0
+ruff>=0.1.0

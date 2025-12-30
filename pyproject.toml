@@ -1,0 +1,40 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sentiment-miner"
+version = "0.1.0"
+description = "Multilingual CSV Sentiment Miner using DSPy"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    { name = "Developer" }
+]
+dependencies = [
+    "dspy>=2.5.0",
+    "pandas>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "tqdm>=4.66.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+sentiment-miner = "sentiment_miner.main:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sentiment_miner"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W"]

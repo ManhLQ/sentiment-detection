@@ -1,0 +1,4 @@
+- Orchestration (Core) - DSPy
+- Language - Python 3.9+
+- LLM Backend - Ollama (GPT-4o-mini)
+- Data Processing - Pandas
