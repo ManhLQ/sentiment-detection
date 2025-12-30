@@ -32,6 +32,9 @@ cp .env.example .env
 # Edit .env and add your OpenAI API key
 # LLM_BACKEND=openai
 # OPENAI_API_KEY=sk-your-key-here
+
+# Optional: Set a custom base URL for OpenAI-compatible servers (e.g. OpenRouter)
+# OPENAI_API_BASE=https://api.openai.com/v1
 ```
 
 ### 3. Run Analysis
@@ -72,6 +75,7 @@ python -m sentiment_miner.main --input data/sample_feedback.csv --column Comment
 | `--output, -o` | Output file path (default: `input_analyzed.csv`) |
 | `--no-save` | Display results only, don't save to file |
 | `--limit, -n` | Limit rows to process (for testing) |
+| `--debug` | Show DSPy prompt history for each row |
 
 ## Output Format
 
@@ -84,5 +88,5 @@ python -m sentiment_miner.main --input data/sample_feedback.csv --column Comment
 
 - **Orchestration**: [DSPy](https://dspy.ai/)
 - **Language**: Python 3.9+
-- **LLM Backend**: OpenAI GPT-4o-mini / Ollama
+- **LLM Backend**: OpenAI (GPT-4o-mini), OpenRouter, or Ollama
 - **Data Processing**: Pandas
