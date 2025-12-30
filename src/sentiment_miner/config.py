@@ -37,7 +37,12 @@ def get_lm() -> dspy.LM:
                 "OPENAI_API_KEY not configured. Please set it in your .env file."
             )
         model = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-        return dspy.LM(model=f"openai/{model}", api_key=api_key)
+        api_base = os.getenv("OPENAI_API_BASE")
+        return dspy.LM(
+            model=f"openai/{model}", 
+            api_key=api_key,
+            api_base=api_base
+        )
     
     elif backend == "ollama":
         base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
