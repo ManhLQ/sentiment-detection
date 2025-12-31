@@ -5,7 +5,6 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 import dspy
-from tqdm import tqdm
 
 from .signatures import FeedbackAnalyzer
 
@@ -38,16 +37,9 @@ def analyze_feedback_batch(
     analyzer = FeedbackAnalyzer()
     results = []
     
-    iterator = tqdm(
-        enumerate(texts),
-        total=len(texts),
-        desc="Processing feedback",
-        disable=not show_progress
-    )
-    
-    for idx, text in iterator:
+    for idx, text in enumerate(texts):
         if show_progress:
-            iterator.set_postfix_str(f"Row {idx + 1}/{len(texts)}")
+            print(f"Processing row {idx + 1}/{len(texts)}...")
         
         try:
             prediction = analyzer(text=text)

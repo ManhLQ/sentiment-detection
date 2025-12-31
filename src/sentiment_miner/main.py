@@ -3,8 +3,6 @@
 import argparse
 import sys
 
-from rich.console import Console
-from rich.table import Table
 
 from .config import configure_dspy, get_llm_backend
 from .io_handlers import generate_output_path, read_csv_column, save_results_csv
@@ -58,107 +56,51 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def display_results_table(results, console: Console) -> None:
-    """Display results as a rich table in the console."""
-    table = Table(
-        title="Sentiment Analysis Results",
-        show_header=True,
-        header_style="bold magenta"
-    )
-    
-    table.add_column("Original Text", style="dim", max_width=50)
-    table.add_column("Sentiment", justify="center")
-    table.add_column("Extracted Topics", style="cyan")
-    
-    # Color mapping for sentiment
-    sentiment_colors = {
-        "Positive": "[green]Positive[/green]",
-        "Negative": "[red]Negative[/red]",
-        "Neutral": "[yellow]Neutral[/yellow]",
-        "Error": "[bold red]Error[/bold red]"
-    }
-    
+def display_results_table(results) -> None:
+    """Display results in a simple format."""
+    print("\n--- Sentiment Analysis Results ---")
     for result in results:
-        # Truncate long text
         text = result.original_text
         if len(text) > 47:
             text = text[:47] + "..."
-        
-        sentiment_display = sentiment_colors.get(
-            result.sentiment, 
-            result.sentiment
-        )
-        topics_display = ", ".join(result.topics)
-        
-        table.add_row(text, sentiment_display, topics_display)
-    
-    console.print(table)
+        print(f"[{result.sentiment}] {text} | Topics: {', '.join(result.topics)}")
 
 
-def display_topic_cloud_table(results, console: Console) -> None:
-    """Display aggregated topics as a word cloud in table format."""
+def display_topic_cloud_table(results) -> None:
+    """Display aggregated topics in a simple format."""
     aggregated = aggregate_topics(results)
     
     if not aggregated:
-        console.print("[yellow]No topics extracted[/yellow]")
+        print("\nNo topics extracted")
         return
     
-    table = Table(
-        title="📊 Topic Cloud (Word Frequency Table)",
-        show_header=True,
-        header_style="bold cyan"
-    )
-    
-    table.add_column("Topic", style="bold")
-    table.add_column("Appearances", justify="center")
-    table.add_column("Dominant Sentiment", justify="center")
-    table.add_column("Visual", justify="left")
-    
-    # Find max count for visual bar scaling
-    max_count = max(count for _, count, _ in aggregated) if aggregated else 1
-    
-    # Color mapping for sentiment
-    sentiment_styles = {
-        "Positive": "green",
-        "Negative": "red",
-        "Neutral": "yellow"
-    }
-    
+    print("\n--- Topic Frequency ---")
+    print(f"{'Topic':<25} | {'Count':<7} | {'Sentiment'}")
+    print("-" * 50)
     for topic, count, sentiment in aggregated:
-        style = sentiment_styles.get(sentiment, "white")
-        sentiment_display = f"[{style}]{sentiment}[/{style}]"
-        
-        # Visual bar (like word cloud size)
-        bar_length = int((count / max_count) * 20)
-        bar = "█" * bar_length + "░" * (20 - bar_length)
-        bar_display = f"[{style}]{bar}[/{style}]"
-        
-        table.add_row(topic, str(count), sentiment_display, bar_display)
-    
-    console.print(table)
+        print(f"{topic[:25]:<25} | {count:<7} | {sentiment}")
 
 
 def main() -> int:
     """Main entry point."""
-    console = Console()
     parser = create_parser()
     args = parser.parse_args()
     
     try:
         # Configure DSPy
-        console.print(f"[bold blue]Using LLM backend:[/bold blue] {get_llm_backend()}")
+        print(f"Using LLM backend: {get_llm_backend()}")
         configure_dspy()
-        console.print("[green]✓[/green] DSPy configured successfully\n")
+        print("DSPy configured successfully\n")
         
         # Read input
-        console.print(f"[bold blue]Reading:[/bold blue] {args.input}")
+        print(f"Reading: {args.input}")
         texts = read_csv_column(args.input, args.column)
         
         if args.limit:
             texts = texts[:args.limit]
-            console.print(f"[yellow]Limited to {args.limit} rows[/yellow]")
+            print(f"Limited to {args.limit} rows")
         
-        console.print(f"[green]✓[/green] Loaded {len(texts)} rows from column '{args.column}'\n")
+        print(f"Loaded {len(texts)} rows from column '{args.column}'\n")
         
         # Process
         results = analyze_feedback_batch(
@@ -166,34 +108,34 @@ def main() -> int:
             show_progress=not args.debug,  # Hide progress bar if debugging to avoid mess
             debug=args.debug
         )
-        console.print()  # New line after progress bar or debug output
+        print()  # New line after progress bar or debug output
         
         # Display detailed results table
-        display_results_table(results, console)
+        display_results_table(results)
         
         # Display word cloud table (topic frequency)
-        console.print()
-        display_topic_cloud_table(results, console)
+        print()
+        display_topic_cloud_table(results)
         
         # Save if requested
         if not args.no_save:
             output_path = args.output or generate_output_path(args.input)
             save_results_csv(results, output_path)
-            console.print(f"\n[green]✓[/green] Results saved to: {output_path}")
+            print(f"\nResults saved to: {output_path}")
         
         return 0
         
     except FileNotFoundError as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+        print(f"Error: {e}")
         return 1
     except KeyError as e:
-        console.print(f"[bold red]Error:[/bold red] {e}")
+        print(f"Error: {e}")
         return 1
     except ValueError as e:
-        console.print(f"[bold red]Configuration Error:[/bold red] {e}")
+        print(f"Configuration Error: {e}")
         return 1
     except KeyboardInterrupt:
-        console.print("\n[yellow]Interrupted by user[/yellow]")
+        print("\nInterrupted by user")
         return 130
 
 
