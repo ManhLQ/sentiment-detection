@@ -4,9 +4,9 @@ import argparse
 import sys
 
 
-from .config import configure_dspy, get_llm_backend
 from .io_handlers import generate_output_path, read_csv_column, save_results_csv
 from .pipeline import aggregate_topics, analyze_feedback_batch
+
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -81,17 +81,12 @@ def display_topic_cloud_table(results) -> None:
         print(f"{topic[:25]:<25} | {count:<7} | {sentiment}")
 
 
-def main() -> int:
-    """Main entry point."""
-    parser = create_parser()
-    args = parser.parse_args()
-    
+def run_analysis_pipeline(args) -> int:
+    """
+    Run the analysis pipeline with the provided arguments.
+    Assumes DSPy has already been configured.
+    """
     try:
-        # Configure DSPy
-        print(f"Using LLM backend: {get_llm_backend()}")
-        configure_dspy()
-        print("DSPy configured successfully\n")
-        
         # Read input
         print(f"Reading: {args.input}")
         texts = read_csv_column(args.input, args.column)
@@ -139,5 +134,5 @@ def main() -> int:
         return 130
 
 
-if __name__ == "__main__":
-    sys.exit(main())
+# No standalone execution here to keep functionality pure.
+# Run via dspy-agent sentiment or src/cli.py
