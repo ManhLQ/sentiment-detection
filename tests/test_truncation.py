@@ -23,8 +23,6 @@ def test_long_field_truncation():
 2. [Feature Two] (priority: important): Another feature description
 3. [Feature Three] (priority: nice-to-have): Third feature description''',
         'complexity_reasoning': 'F' * 900,  # Max is 800
-        'estimated_build_time': '2-3 weeks',
-        'unique_selling_point': 'H' * 600,  # Max is 500
     }
     
     try:
@@ -35,7 +33,6 @@ def test_long_field_truncation():
         assert len(idea.tagline) <= 150, f"Tagline too long: {len(idea.tagline)}"
         assert len(idea.description) <= 1000, f"Description too long: {len(idea.description)}"
         assert len(idea.target_users) <= 200, f"Target users too long: {len(idea.target_users)}"
-        assert len(idea.unique_selling_point) <= 500, f"USP too long: {len(idea.unique_selling_point)}"
         assert len(idea.complexity_justification.reasoning) <= 800, f"Reasoning too long: {len(idea.complexity_justification.reasoning)}"
         
         # Check features
@@ -48,7 +45,6 @@ def test_long_field_truncation():
         print(f"   Tagline: {len(idea.tagline)} chars (max 150)")
         print(f"   Description: {len(idea.description)} chars (max 1000)")
         print(f"   Target users: {len(idea.target_users)} chars (max 200)")
-        print(f"   USP: {len(idea.unique_selling_point)} chars (max 500)")
         print(f"   Reasoning: {len(idea.complexity_justification.reasoning)} chars (max 800)")
         print(f"   Features: {len(idea.core_features)} features parsed")
         

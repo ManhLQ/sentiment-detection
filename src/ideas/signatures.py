@@ -3,6 +3,52 @@
 import dspy
 
 
+class GenerateLiteAppIdea(dspy.Signature):
+    """Generate a lightweight app idea with just the essentials.
+    
+    The generated idea should be:
+    - Quick to understand with a catchy name and clear description
+    - Focused on core concepts rather than detailed features
+    - Practical and interesting
+    
+    This is a simplified version for rapid ideation.
+    """
+    
+    # Input fields
+    domain: str = dspy.InputField(
+        desc="Domain or seed idea (e.g., 'project management', 'fitness tracking', 'developer tools')"
+    )
+    
+    complexity: str = dspy.InputField(
+        desc="Complexity level: 'low' (1-2 weeks, 2-4 features), "
+             "'medium' (3-6 weeks, 4-8 features), or "
+             "'high' (2-3 months, 8+ features)"
+    )
+    
+    additional_requirements: str = dspy.InputField(
+        desc="Any additional requirements or constraints, or 'none' if not specified"
+    )
+    
+    # Output fields
+    app_name: str = dspy.OutputField(
+        desc="Catchy, memorable name for the app (2-4 words max)"
+    )
+    
+    tagline: str = dspy.OutputField(
+        desc="One-sentence tagline that captures the essence of the app"
+    )
+    
+    description: str = dspy.OutputField(
+        desc="Detailed description of the app in 2-4 sentences, explaining what it does and why it's useful"
+    )
+    
+    concepts: str = dspy.OutputField(
+        desc="List of 3-6 core feature concepts as a numbered list. "
+             "Each concept should be brief (1-2 sentences max). "
+             "Format: '1. Concept name: Brief description'"
+    )
+
+
 class GenerateAppIdea(dspy.Signature):
     """Generate a complete, concrete app idea based on domain and complexity.
     
@@ -10,7 +56,7 @@ class GenerateAppIdea(dspy.Signature):
     - Practical and buildable within the specified complexity
     - Focused on solving a real problem or use case
     - Interesting and valuable to implement
-    - Unique enough to avoid being a generic CRUD app
+    - Unique enough to avoid being a generic CRUD app, hello world, todo app
     
     Focus purely on WHAT to build (features, use cases, value) not HOW to build it (tech stack).
     """
@@ -55,14 +101,6 @@ class GenerateAppIdea(dspy.Signature):
     complexity_reasoning: str = dspy.OutputField(
         desc="2-3 sentence explanation of why this idea matches the requested complexity level, "
              "mentioning feature count, data model complexity, and integration requirements"
-    )
-    
-    estimated_build_time: str = dspy.OutputField(
-        desc="Rough estimate of build time (e.g., '2-3 weeks', '1-2 months')"
-    )
-    
-    unique_selling_point: str = dspy.OutputField(
-        desc="What makes this idea interesting, unique, or different from typical apps in this domain"
     )
 
 

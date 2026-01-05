@@ -5,6 +5,7 @@ from typing import Optional
 
 from ideas.signatures import (
     GenerateAppIdea,
+    GenerateLiteAppIdea,
     ValidateAppIdea,
 )
 
@@ -54,9 +55,6 @@ class IdeaGenerator(dspy.Module):
             context_parts.append(f"Features (sample):")
             for j, feature in enumerate(idea.core_features[:2], 1):
                 context_parts.append(f"  {j}. [{feature.name}] (priority: {feature.priority}): {feature.description}")
-            
-            context_parts.append(f"Build Time: {idea.estimated_build_time}")
-            context_parts.append(f"Unique Selling Point: {idea.unique_selling_point}")
         
         context_parts.append("\n--- End of Examples ---\n")
         context_parts.append("Now generate a new, unique idea based on the user's requirements, following the same structure and quality as the examples above.\n")
@@ -90,6 +88,40 @@ class IdeaGenerator(dspy.Module):
         
         return self.generate(
             domain=domain_with_context,
+            complexity=complexity,
+            additional_requirements=additional_requirements,
+        )
+
+
+class LiteIdeaGenerator(dspy.Module):
+    """Lightweight module for generating simplified app ideas."""
+    
+    def __init__(self):
+        """Initialize the lite generator."""
+        super().__init__()
+        self.generate = dspy.ChainOfThought(GenerateLiteAppIdea)
+    
+    def forward(
+        self,
+        domain: str,
+        complexity: str,
+        additional_requirements: Optional[str] = None,
+    ) -> dspy.Prediction:
+        """Generate a lite app idea based on requirements.
+        
+        Args:
+            domain: Domain or seed idea
+            complexity: Complexity level (low/medium/high)
+            additional_requirements: Additional constraints (or 'none')
+            
+        Returns:
+            DSPy Prediction with generated lite app idea fields
+        """
+        # Normalize None to 'none'
+        additional_requirements = additional_requirements or 'none'
+        
+        return self.generate(
+            domain=domain,
             complexity=complexity,
             additional_requirements=additional_requirements,
         )

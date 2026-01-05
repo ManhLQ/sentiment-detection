@@ -51,8 +51,6 @@ EXAMPLE_1_IDEA = AppIdea(
         integration_count=0,
         reasoning="Low complexity with 4 simple features, minimal data models (User, Task, Session), no external integrations, and straightforward CRUD operations. Perfect for a 1-2 week build.",
     ),
-    estimated_build_time="1-2 weeks",
-    unique_selling_point="Unlike comprehensive productivity apps that can feel overwhelming, FocusBlocks strips away the noise. Its unique selling point is its strict focus on the visual psychology of streak-building, making habit formation the primary and only user interface.",
 )
 
 # Example 2: Medium Complexity - Project Management
@@ -104,8 +102,6 @@ EXAMPLE_2_IDEA = AppIdea(
         integration_count=0,
         reasoning="Medium complexity with 6 features requiring user authentication, role-based permissions, voting mechanics, and state management. Approximately 7 data models (User, Team, Requirement, Vote, Comment, Attachment, WorkflowState). Suitable for 3-6 weeks of development.",
     ),
-    estimated_build_time="4-6 weeks",
-    unique_selling_point="Most requirement tools are either too simple (spreadsheets) or too complex (enterprise tools). RequireFlow hits the sweet spot by focusing specifically on the early-stage requirement gathering process with built-in collaboration and prioritization, making it perfect for agile teams.",
 )
 
 # Example 3: High Complexity - Education
@@ -167,8 +163,6 @@ EXAMPLE_3_IDEA = AppIdea(
         integration_count=2,
         reasoning="High complexity with 8 features including AI-driven personalization, real-time code execution, mentor matching algorithms, and analytics. Requires approximately 15 data models (User, LearningPath, Module, Challenge, Submission, Assessment, Mentor, Review, Achievement, etc.) and integrations with code execution sandbox and possibly LLM for content generation. Estimated 2-3 months of development.",
     ),
-    estimated_build_time="2-3 months",
-    unique_selling_point="Unlike static course platforms, CodePath continuously adapts to each learner's unique journey. The combination of AI-driven personalization, hands-on practice, and human mentorship creates a learning experience that's both scalable and deeply personal.",
 )
 
 # Example 4: Medium Complexity - Developer Tools
@@ -220,8 +214,6 @@ EXAMPLE_4_IDEA = AppIdea(
         integration_count=0,
         reasoning="Medium complexity with 6 features requiring proxy implementation, caching strategies, analytics, and cost calculation. Approximately 6 data models (User, APIConfig, CacheRule, CachedResponse, UsageMetric, CostCalculation). No external integrations needed as it acts as a proxy. Suitable for 3-5 weeks of development.",
     ),
-    estimated_build_time="3-5 weeks",
-    unique_selling_point="Most caching solutions are generic and require significant configuration. APIVault is specifically designed for API cost optimization, with built-in intelligence to suggest optimal caching strategies based on actual usage patterns and automatic cost tracking that shows ROI in real-time.",
 )
 
 # Collect all examples

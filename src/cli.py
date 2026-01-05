@@ -100,6 +100,12 @@ def create_main_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Show DSPy prompt history for each generation step"
     )
+    ideas_parser.add_argument(
+        "--mode", "-m",
+        choices=["lite", "full"],
+        default="lite",
+        help="Generation mode: 'lite' (fast, name/description/concepts) or 'full' (detailed with features/complexity) (default: lite)"
+    )
     
     return parser
 
@@ -128,9 +134,13 @@ def run_ideas(args) -> int:
             AppIdeaGenerator,
             ComplexityLevel,
             IdeaRequest,
+            LiteAppIdeaGenerator,
             format_as_colored_text,
             format_as_json,
             format_as_markdown,
+            format_lite_as_colored_text,
+            format_lite_as_json,
+            format_lite_as_markdown,
             save_to_file,
         )
         
@@ -141,24 +151,49 @@ def run_ideas(args) -> int:
             additional_requirements=args.requirements,
         )
         
-        # Generate idea
-        generator = AppIdeaGenerator()
-        idea, metadata = generator.generate_with_validation(
-            request,
-            verbose=args.verbose,
-            debug=args.debug,
-        )
-        
-        # Format output
-        if args.format == "json":
-            output = format_as_json(idea)
-            file_ext = "json"
-        elif args.format == "markdown":
-            output = format_as_markdown(idea)
-            file_ext = "md"
-        else:  # terminal
-            output = format_as_colored_text(idea)
-            file_ext = "md"  # Still save as markdown even for terminal display
+        # Generate idea based on mode
+        if args.mode == "lite":
+            generator = LiteAppIdeaGenerator()
+            idea = generator.generate_with_progress(
+                request,
+                verbose=args.verbose,
+                debug=args.debug,
+            )
+            
+            # Format output for lite mode
+            if args.format == "json":
+                output = format_lite_as_json(idea)
+                file_ext = "json"
+            elif args.format == "markdown":
+                output = format_lite_as_markdown(idea)
+                file_ext = "md"
+            else:  # terminal
+                output = format_lite_as_colored_text(idea)
+                file_ext = "md"  # Still save as markdown
+            
+            # Save markdown version
+            markdown_output = format_lite_as_markdown(idea)
+        else:  # full mode
+            generator = AppIdeaGenerator()
+            idea, metadata = generator.generate_with_validation(
+                request,
+                verbose=args.verbose,
+                debug=args.debug,
+            )
+            
+            # Format output for full mode
+            if args.format == "json":
+                output = format_as_json(idea)
+                file_ext = "json"
+            elif args.format == "markdown":
+                output = format_as_markdown(idea)
+                file_ext = "md"
+            else:  # terminal
+                output = format_as_colored_text(idea)
+                file_ext = "md"  # Still save as markdown
+            
+            # Save markdown version
+            markdown_output = format_as_markdown(idea)
         
         # Always save to output folder with app name
         import os
@@ -177,7 +212,6 @@ def run_ideas(args) -> int:
         auto_filename = output_dir / f"{safe_name}.{file_ext}"
         
         # Save markdown version to output folder
-        markdown_output = format_as_markdown(idea)
         markdown_filename = output_dir / f"{safe_name}.md"
         save_to_file(markdown_output, str(markdown_filename))
         
@@ -191,8 +225,8 @@ def run_ideas(args) -> int:
             print(output)
             print(f"\n📁 Idea saved to: {markdown_filename}")
         
-        # Show metadata if verbose
-        if args.verbose:
+        # Show metadata if verbose (only for full mode)
+        if args.verbose and args.mode == "full":
             print(f"\n📊 Generation metadata:")
             print(f"  Attempts: {metadata['attempts']}")
             print(f"  Validation passed: {metadata['validation_passed']}")

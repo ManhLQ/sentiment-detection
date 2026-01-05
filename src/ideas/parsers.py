@@ -7,6 +7,7 @@ from ideas.models import (
     AppIdea,
     ComplexityJustification,
     Feature,
+    LiteAppIdea,
 )
 
 
@@ -150,8 +151,7 @@ def parse_app_idea(dspy_output: dict) -> AppIdea:
         )
         
         # Build AppIdea with safe truncation for all fields
-        # Model limits: name(50), tagline(150), description(1000), target_users(200),
-        # estimated_build_time(varies), unique_selling_point(500)
+        # Model limits: name(50), tagline(150), description(1000), target_users(200)
         return AppIdea(
             name=_safe_truncate(dspy_output.get('app_name', '').strip(), 50),
             tagline=_safe_truncate(dspy_output.get('tagline', '').strip(), 150),
@@ -159,9 +159,66 @@ def parse_app_idea(dspy_output: dict) -> AppIdea:
             target_users=_safe_truncate(dspy_output.get('target_users', '').strip(), 200),
             core_features=core_features,
             complexity_justification=complexity_justification,
-            estimated_build_time=dspy_output.get('estimated_build_time', '').strip(),
-            unique_selling_point=_safe_truncate(dspy_output.get('unique_selling_point', '').strip(), 500),
         )
         
     except Exception as e:
         raise ValueError(f"Failed to parse DSPy output into AppIdea: {e}") from e
+
+
+def parse_concepts(concepts_text: str) -> list[str]:
+    """Parse numbered concept list into list of strings.
+    
+    Expected format:
+    1. Concept name: Brief description
+    2. Another concept: Another description
+    
+    Args:
+        concepts_text: Numbered list of concepts from DSPy output
+        
+    Returns:
+        List of concept strings
+    """
+    concepts = []
+    
+    # Pattern: N. Text (everything until next number or end)
+    pattern = r'\d+\.\s*(.+?)(?=\n\d+\.|\Z)'
+    
+    matches = re.finditer(pattern, concepts_text, re.DOTALL)
+    
+    for match in matches:
+        concept = match.group(1).strip()
+        # Truncate to max 200 chars per concept
+        concepts.append(_safe_truncate(concept, 200))
+    
+    return concepts
+
+
+def parse_lite_app_idea(dspy_output: dict) -> LiteAppIdea:
+    """Parse DSPy output into LiteAppIdea model.
+    
+    Args:
+        dspy_output: Dictionary containing DSPy output fields
+        
+    Returns:
+        LiteAppIdea object
+        
+    Raises:
+        ValueError: If required fields are missing or parsing fails
+    """
+    try:
+        # Parse concepts
+        concepts = parse_concepts(dspy_output.get('concepts', ''))
+        
+        if not concepts:
+            raise ValueError("Failed to parse any concepts from output")
+        
+        # Build LiteAppIdea with safe truncation
+        return LiteAppIdea(
+            name=_safe_truncate(dspy_output.get('app_name', '').strip(), 50),
+            tagline=_safe_truncate(dspy_output.get('tagline', '').strip(), 150),
+            description=_safe_truncate(dspy_output.get('description', '').strip(), 1000),
+            concepts=concepts,
+        )
+        
+    except Exception as e:
+        raise ValueError(f"Failed to parse DSPy output into LiteAppIdea: {e}") from e

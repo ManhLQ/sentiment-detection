@@ -2,7 +2,12 @@
 
 ## Overview
 
-The App Idea Generator is a DSPy-powered module that creates comprehensive, validated app ideas based on your requirements. It takes into account domain, complexity level, and additional constraints to generate practical, buildable app concepts.
+The App Idea Generator is a DSPy-powered module that creates app ideas based on your requirements. It offers two modes:
+
+- **Lite Mode (Default)**: Fast generation of name, tagline, description, and core concepts - perfect for quick ideation
+- **Full Mode**: Comprehensive ideas with detailed features, complexity analysis, and build time estimates - ideal for planning
+
+Both modes take into account domain, complexity level, and additional constraints to generate practical, buildable app concepts.
 
 ### How It Works
 
@@ -21,24 +26,31 @@ This approach ensures consistent quality while maintaining creativity and avoidi
 ### Basic Usage
 
 ```bash
-# Generate a simple productivity app
+# Generate a lite idea (default) - fast and simple
 python src/cli.py ideas -d "productivity" -c low
 
-# Generate a medium complexity project management app
-python src/cli.py ideas -d "project management" -c medium
+# Generate a full idea with detailed features
+python src/cli.py ideas -d "productivity" -c low -m full
 
-# Generate a complex education platform
-python src/cli.py ideas -d "education" -c high
+# Generate a medium complexity project management app
+python src/cli.py ideas -d "project management" -c medium -m full
 ```
 
 ### With Additional Requirements
 
 ```bash
-# Add specific constraints
+# Lite mode with constraints
 python src/cli.py ideas \
   -d "fitness tracking" \
   -c medium \
   -r "must support offline mode and data sync"
+
+# Full mode with constraints
+python src/cli.py ideas \
+  -d "fitness tracking" \
+  -c medium \
+  -r "must support offline mode and data sync" \
+  -m full
 ```
 
 ## Command-Line Options
@@ -51,6 +63,7 @@ python src/cli.py ideas \
 
 - `--complexity`, `-c`: Complexity level - `low`, `medium`, or `high` (default: medium)
 - `--requirements`, `-r`: Additional requirements or constraints
+- `--mode`, `-m`: Generation mode - `lite` (fast, simple) or `full` (detailed) (default: lite)
 - `--format`, `-f`: Output format - `json`, `markdown`, or `terminal` (default: terminal)
 - `--output`, `-o`: Output file path (saves to file instead of stdout)
 - `--verbose`, `-v`: Show generation progress and validation details
@@ -100,7 +113,18 @@ Well-formatted markdown suitable for documentation.
 
 ## Output Structure
 
-Every generated idea includes:
+### Lite Mode (Default)
+
+Every lite idea includes:
+
+- **Name**: Catchy, memorable app name
+- **Tagline**: One-sentence description
+- **Description**: Detailed explanation of what the app does
+- **Core Concepts**: 3-6 brief feature concepts
+
+### Full Mode
+
+Every full idea includes:
 
 - **Name**: Catchy, memorable app name
 - **Tagline**: One-sentence description
@@ -109,42 +133,54 @@ Every generated idea includes:
 - **Core Features**: Organized by priority (Core, Important, Nice-to-Have)
 - **Complexity Justification**: Why this matches the requested complexity
 - **Estimated Build Time**: Rough time estimate
-- **Unique Selling Point**: What makes this idea special
 
 **Note**: All ideas are automatically saved to the `output/` folder in markdown format using the app name as the filename.
 
 ## Examples
 
-### Example 1: Simple Productivity App
+### Example 1: Quick Lite Idea
+
+```bash
+python src/cli.py ideas \
+  -d "productivity" \
+  -c low
+```
+
+Generates a simple idea with name, tagline, description, and concepts in seconds.
+
+### Example 2: Detailed Full Idea
 
 ```bash
 python src/cli.py ideas \
   -d "productivity" \
   -c low \
+  -m full \
   -f markdown \
   -o focusblocks.md
 ```
 
-Generates a simple, focused productivity app with 2-4 features.
+Generates a comprehensive idea with detailed features and complexity analysis.
 
-### Example 2: Medium Complexity with Requirements
+### Example 3: Medium Complexity with Requirements
 
 ```bash
 python src/cli.py ideas \
   -d "project management" \
   -c medium \
+  -m full \
   -r "focus on requirements gathering and stakeholder collaboration" \
   --verbose
 ```
 
-Generates a project management app with specific focus areas.
+Generates a detailed project management app with specific focus areas.
 
-### Example 3: Complex Platform
+### Example 4: Complex Platform
 
 ```bash
 python src/cli.py ideas \
   -d "education" \
   -c high \
+  -m full \
   -r "personalized learning paths with mentor matching" \
   --format json \
   --output learning_platform.json
@@ -152,12 +188,13 @@ python src/cli.py ideas \
 
 Generates a comprehensive learning platform.
 
-### Example 4: Developer Tools
+### Example 5: Developer Tools
 
 ```bash
 python src/cli.py ideas \
   -d "developer tools" \
   -c medium \
+  -m full \
   -r "cost optimization and analytics" \
   --debug
 ```
@@ -188,7 +225,6 @@ idea, metadata = generator.generate_with_validation(
 # Access idea properties
 print(f"App Name: {idea.name}")
 print(f"Features: {len(idea.core_features)}")
-print(f"Build Time: {idea.estimated_build_time}")
 
 # Save to file
 from ideas import format_as_markdown, save_to_file
@@ -198,18 +234,22 @@ save_to_file(markdown, "my_idea.md")
 
 ## Tips for Best Results
 
-1. **Be Specific with Domain**: Instead of "app", use "fitness tracking for runners" or "project management for small teams"
+1. **Choose the Right Mode**:
+   - Use **lite mode** for brainstorming and quick idea exploration
+   - Use **full mode** when you need detailed planning and feature breakdown
 
-2. **Use Requirements Wisely**: Add constraints that affect features, not implementation:
+2. **Be Specific with Domain**: Instead of "app", use "fitness tracking for runners" or "project management for small teams"
+
+3. **Use Requirements Wisely**: Add constraints that affect features, not implementation:
    - ✅ Good: "must work offline", "real-time collaboration", "mobile-first"
    - ❌ Avoid: "use FastAPI", "PostgreSQL database" (these are implementation details)
 
-3. **Match Complexity to Goals**: 
+4. **Match Complexity to Goals**: 
    - Learning project? → Low complexity
    - Portfolio piece? → Medium complexity
    - Startup MVP? → Medium to High complexity
 
-4. **Iterate**: Use `--verbose` to see validation feedback and regenerate if needed
+5. **Iterate**: Use `--verbose` to see validation feedback (full mode) or generation progress
 
 ## Troubleshooting
 
@@ -222,7 +262,6 @@ The generator automatically truncates fields that exceed maximum lengths:
 - Target users: 200 characters
 - Feature name: 100 characters
 - Feature description: 300 characters
-- Unique selling point: 300 characters
 - Complexity reasoning: 500 characters
 
 If you see "..." at the end of a field, it was truncated. This is normal and prevents validation errors.

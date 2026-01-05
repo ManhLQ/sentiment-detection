@@ -4,9 +4,9 @@ import json
 from typing import Optional
 
 import dspy
-from ideas.models import AppIdea, IdeaRequest
-from ideas.modules import IdeaGenerator, IdeaValidator
-from ideas.parsers import parse_app_idea
+from ideas.models import AppIdea, IdeaRequest, LiteAppIdea
+from ideas.modules import IdeaGenerator, IdeaValidator, LiteIdeaGenerator
+from ideas.parsers import parse_app_idea, parse_lite_app_idea
 
 
 class AppIdeaGenerator:
@@ -49,8 +49,6 @@ class AppIdeaGenerator:
             'target_users': prediction.target_users,
             'core_features': prediction.core_features,
             'complexity_reasoning': prediction.complexity_reasoning,
-            'estimated_build_time': prediction.estimated_build_time,
-            'unique_selling_point': prediction.unique_selling_point,
         }
         
         return parse_app_idea(dspy_output)
@@ -182,3 +180,75 @@ def create_request_from_dict(data: dict) -> IdeaRequest:
         IdeaRequest object
     """
     return IdeaRequest.model_validate(data)
+
+
+class LiteAppIdeaGenerator:
+    """Orchestrator for generating lightweight app ideas (no validation)."""
+    
+    def __init__(self):
+        """Initialize the lite generator."""
+        self.generator = LiteIdeaGenerator()
+    
+    def generate(self, request: IdeaRequest) -> LiteAppIdea:
+        """Generate a lite app idea from a request.
+        
+        Args:
+            request: IdeaRequest with requirements
+            
+        Returns:
+            Generated LiteAppIdea
+            
+        Raises:
+            ValueError: If generation or parsing fails
+        """
+        # Generate idea
+        prediction = self.generator(
+            domain=request.domain,
+            complexity=request.complexity.value,
+            additional_requirements=request.additional_requirements,
+        )
+        
+        # Parse DSPy output to LiteAppIdea
+        dspy_output = {
+            'app_name': prediction.app_name,
+            'tagline': prediction.tagline,
+            'description': prediction.description,
+            'concepts': prediction.concepts,
+        }
+        
+        return parse_lite_app_idea(dspy_output)
+    
+    def generate_with_progress(
+        self,
+        request: IdeaRequest,
+        verbose: bool = False,
+        debug: bool = False,
+    ) -> LiteAppIdea:
+        """Generate a lite idea with optional progress output.
+        
+        Args:
+            request: IdeaRequest with requirements
+            verbose: Print generation progress
+            debug: Show DSPy prompt history
+            
+        Returns:
+            Generated LiteAppIdea
+        """
+        if verbose:
+            print(f"\n🎨 Generating lite idea...")
+        
+        # Generate idea
+        idea = self.generate(request)
+        
+        if verbose:
+            print(f"✨ Generated: {idea.name}")
+        
+        # Show DSPy history if debug mode
+        if debug:
+            print("\n" + "="*80)
+            print("DSPy Prompt History (Generation)")
+            print("="*80)
+            dspy.inspect_history(n=1)
+            print("="*80 + "\n")
+        
+        return idea

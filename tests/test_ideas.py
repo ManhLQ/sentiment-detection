@@ -53,8 +53,6 @@ def test_parser():
 2. [Feature Two] (priority: important): Second important feature
 3. [Feature Three] (priority: nice-to-have): Third optional feature''',
         'complexity_reasoning': 'This is a simple app with 3 features and minimal data models.',
-        'estimated_build_time': '1-2 weeks',
-        'unique_selling_point': 'Simple and focused on testing the parser functionality',
     }
     
     try:
@@ -62,7 +60,6 @@ def test_parser():
         print("✅ Parsed successfully!")
         print(f"   Name: {idea.name}")
         print(f"   Features: {len(idea.core_features)}")
-        print(f"   Build Time: {idea.estimated_build_time}")
         return True
     except Exception as e:
         print(f"❌ Parser failed: {e}")

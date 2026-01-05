@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Union
 
-from ideas.models import AppIdea
+from ideas.models import AppIdea, LiteAppIdea
 
 
 def format_as_json(idea: AppIdea) -> str:
@@ -78,12 +78,6 @@ def format_as_markdown(idea: AppIdea) -> str:
         "",
         idea.complexity_justification.reasoning,
         "",
-        f"**Estimated Build Time:** {idea.estimated_build_time}",
-        "",
-        "## 💎 Unique Selling Point",
-        "",
-        idea.unique_selling_point,
-        "",
     ])
     
     return '\n'.join(lines)
@@ -155,12 +149,6 @@ def format_as_colored_text(idea: AppIdea) -> str:
         f"Integrations: {idea.complexity_justification.integration_count}",
         f"  {idea.complexity_justification.reasoning}",
         "",
-        f"{Colors.BOLD}⏱️  Build Time{Colors.END}",
-        f"  {idea.estimated_build_time}",
-        "",
-        f"{Colors.BOLD}💎 Unique Selling Point{Colors.END}",
-        f"  {idea.unique_selling_point}",
-        "",
         f"{Colors.HEADER}{'=' * 80}{Colors.END}",
         "",
     ])
@@ -178,3 +166,93 @@ def save_to_file(content: str, filepath: Union[str, Path]) -> None:
     filepath = Path(filepath)
     filepath.parent.mkdir(parents=True, exist_ok=True)
     filepath.write_text(content, encoding='utf-8')
+
+
+# Lite mode formatters
+
+def format_lite_as_json(idea: LiteAppIdea) -> str:
+    """Format lite app idea as JSON.
+    
+    Args:
+        idea: LiteAppIdea to format
+        
+    Returns:
+        JSON string
+    """
+    return idea.model_dump_json(indent=2)
+
+
+def format_lite_as_markdown(idea: LiteAppIdea) -> str:
+    """Format lite app idea as markdown.
+    
+    Args:
+        idea: LiteAppIdea to format
+        
+    Returns:
+        Markdown formatted string
+    """
+    lines = [
+        f"# {idea.name}",
+        "",
+        f"> {idea.tagline}",
+        "",
+        "## 📝 Description",
+        "",
+        idea.description,
+        "",
+        "## 💡 Core Concepts",
+        "",
+    ]
+    
+    for i, concept in enumerate(idea.concepts, 1):
+        lines.append(f"{i}. {concept}")
+    
+    lines.append("")
+    
+    return '\n'.join(lines)
+
+
+def format_lite_as_colored_text(idea: LiteAppIdea) -> str:
+    """Format lite app idea with ANSI colors for terminal display.
+    
+    Args:
+        idea: LiteAppIdea to format
+        
+    Returns:
+        Colored text string
+    """
+    class Colors:
+        HEADER = '\033[95m'
+        BLUE = '\033[94m'
+        CYAN = '\033[96m'
+        GREEN = '\033[92m'
+        YELLOW = '\033[93m'
+        RED = '\033[91m'
+        END = '\033[0m'
+        BOLD = '\033[1m'
+        UNDERLINE = '\033[4m'
+    
+    lines = [
+        "",
+        f"{Colors.BOLD}{Colors.HEADER}{'=' * 80}{Colors.END}",
+        f"{Colors.BOLD}{Colors.CYAN}{idea.name}{Colors.END}",
+        f"{Colors.HEADER}{'=' * 80}{Colors.END}",
+        "",
+        f"{Colors.BOLD}💡 {idea.tagline}{Colors.END}",
+        "",
+        f"{Colors.BOLD}📝 Description{Colors.END}",
+        idea.description,
+        "",
+        f"{Colors.BOLD}💡 Core Concepts{Colors.END}",
+    ]
+    
+    for i, concept in enumerate(idea.concepts, 1):
+        lines.append(f"  {Colors.GREEN}{i}.{Colors.END} {concept}")
+    
+    lines.extend([
+        "",
+        f"{Colors.HEADER}{'=' * 80}{Colors.END}",
+        "",
+    ])
+    
+    return '\n'.join(lines)

@@ -13,6 +13,49 @@ class ComplexityLevel(str, Enum):
     HIGH = "high"
 
 
+class LiteAppIdea(BaseModel):
+    """Lightweight app idea with just the essentials."""
+    
+    name: str = Field(
+        ...,
+        description="Catchy, memorable name for the app",
+        min_length=3,
+        max_length=50,
+    )
+    
+    tagline: str = Field(
+        ...,
+        description="One-sentence tagline describing the app",
+        min_length=10,
+        max_length=150,
+    )
+    
+    description: str = Field(
+        ...,
+        description="Detailed description of the app (2-4 sentences)",
+        min_length=50,
+        max_length=1000,
+    )
+    
+    concepts: list[str] = Field(
+        ...,
+        description="List of 3-6 core feature concepts",
+        min_length=3,
+        max_length=10,
+    )
+    
+    @field_validator("concepts")
+    @classmethod
+    def validate_concepts(cls, concepts: list[str]) -> list[str]:
+        """Ensure each concept is not empty and has reasonable length."""
+        for concept in concepts:
+            if not concept or len(concept.strip()) < 5:
+                raise ValueError("Each concept must be at least 5 characters")
+            if len(concept) > 200:
+                raise ValueError("Each concept must be at most 200 characters")
+        return concepts
+
+
 class IdeaRequest(BaseModel):
     """Input model for app idea generation request."""
     
@@ -141,19 +184,7 @@ class AppIdea(BaseModel):
         ...,
         description="Why this idea matches the requested complexity",
     )
-    
-    estimated_build_time: str = Field(
-        ...,
-        description="Rough estimate of build time (e.g., '2-3 weeks', '1-2 months')",
-    )
-    
-    unique_selling_point: str = Field(
-        ...,
-        description="What makes this idea interesting or unique",
-        min_length=20,
-        max_length=500,
-    )
-    
+
     @field_validator("core_features")
     @classmethod
     def validate_feature_priorities(cls, features: list[Feature]) -> list[Feature]:
