@@ -16,6 +16,7 @@ from ideas.formatters import (
 )
 from ideas.generator import (
     AppIdeaGenerator,
+    IdeaRefinerOrchestrator,
     LiteAppIdeaGenerator,
     create_idea_from_dict,
     create_request_from_dict,
@@ -27,8 +28,9 @@ from ideas.models import (
     Feature,
     IdeaRequest,
     LiteAppIdea,
+    RefinementRequest,
 )
-from ideas.modules import IdeaGenerator, IdeaValidator, LiteIdeaGenerator
+from ideas.modules import IdeaGenerator, IdeaRefiner, IdeaValidator, LiteIdeaGenerator
 from ideas.parsers import (
     parse_app_idea,
     parse_complexity_justification,
@@ -38,6 +40,7 @@ from ideas.parsers import (
 from ideas.signatures import (
     GenerateAppIdea,
     GenerateLiteAppIdea,
+    RefineAppIdea,
     ValidateAppIdea,
 )
 
@@ -75,4 +78,10 @@ __all__ = [
     "parse_lite_app_idea",
     "create_idea_from_dict",
     "create_request_from_dict",
+    
+    # Refinement
+    "IdeaRefinerOrchestrator",
+    "RefinementRequest",
+    "IdeaRefiner",
+    "RefineAppIdea",
 ]

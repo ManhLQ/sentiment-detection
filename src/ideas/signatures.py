@@ -140,3 +140,40 @@ class ValidateAppIdea(dspy.Signature):
     suggestions: str = dspy.OutputField(
         desc="Suggestions for improvement, or 'none' if idea is already good"
     )
+
+
+class RefineAppIdea(dspy.Signature):
+    """Refine an existing app idea based on user feedback.
+    
+    The refinement should:
+    - Preserve unchanged sections unless explicitly mentioned in feedback
+    - Only modify parts that the feedback addresses
+    - Maintain the original document structure and format
+    - Keep the same markdown formatting style
+    """
+    
+    # Input fields
+    original_document: str = dspy.InputField(
+        desc="The original idea document in markdown format"
+    )
+    
+    feedback: str = dspy.InputField(
+        desc="User feedback describing what needs improvement or changes"
+    )
+    
+    full_regeneration: str = dspy.InputField(
+        desc="'yes' if entire document should be regenerated, 'no' if only mentioned sections should be updated"
+    )
+    
+    # Output fields
+    refined_document: str = dspy.OutputField(
+        desc="The refined document with requested changes applied. "
+             "If full_regeneration is 'no', preserve all unchanged sections exactly as they were. "
+             "If full_regeneration is 'yes', regenerate the entire document with feedback incorporated. "
+             "Maintain markdown formatting and structure."
+    )
+    
+    changes_summary: str = dspy.OutputField(
+        desc="Brief summary of what was changed (2-3 sentences)"
+    )
+

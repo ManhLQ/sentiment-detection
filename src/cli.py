@@ -107,6 +107,35 @@ def create_main_parser() -> argparse.ArgumentParser:
         help="Generation mode: 'lite' (fast, name/description/concepts) or 'full' (detailed with features/complexity) (default: lite)"
     )
     
+    # Ideas Refiner Subparser
+    refine_parser = subparsers.add_parser(
+        "refine",
+        help="Refine an existing idea document based on feedback"
+    )
+    refine_parser.add_argument(
+        "document",
+        help="Path to the idea document to refine (from output/ directory)"
+    )
+    refine_parser.add_argument(
+        "--feedback", "-f",
+        help="Feedback text (if not provided, will prompt interactively)"
+    )
+    refine_parser.add_argument(
+        "--full",
+        action="store_true",
+        help="Regenerate entire document instead of selective updates"
+    )
+    refine_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show refinement progress"
+    )
+    refine_parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show DSPy prompt history"
+    )
+    
     return parser
 
 def run_sentiment_miner(args) -> int:
@@ -240,6 +269,67 @@ def run_ideas(args) -> int:
         traceback.print_exc()
         return 1
 
+def run_refine(args) -> int:
+    """Import and run the idea refiner."""
+    try:
+        from ideas.generator import IdeaRefinerOrchestrator
+        from pathlib import Path
+        
+        # Validate document path
+        doc_path = Path(args.document)
+        if not doc_path.exists():
+            # Try prepending output/ if not found
+            doc_path = Path("output") / args.document
+            if not doc_path.exists():
+                print(f"❌ Error: Document not found: {args.document}")
+                print(f"   Also tried: output/{args.document}")
+                return 1
+        
+        # Get feedback (interactive or from args)
+        feedback = args.feedback
+        if not feedback:
+            print("\n📝 Enter your feedback (what would you like to improve?):")
+            print("   (Press Ctrl+D or Ctrl+Z when done)\n")
+            try:
+                lines = []
+                while True:
+                    try:
+                        line = input()
+                        lines.append(line)
+                    except EOFError:
+                        break
+                feedback = '\n'.join(lines).strip()
+            except KeyboardInterrupt:
+                print("\n\n❌ Cancelled")
+                return 1
+            
+            if not feedback:
+                print("❌ Error: Feedback cannot be empty")
+                return 1
+        
+        # Run refinement
+        refiner = IdeaRefinerOrchestrator()
+        refined_content, changes_summary = refiner.refine(
+            document_path=str(doc_path),
+            feedback=feedback,
+            full_regeneration=args.full,
+            verbose=args.verbose,
+            debug=args.debug,
+        )
+        
+        if not args.verbose:
+            print(f"\n✅ Refinement complete!")
+            print(f"📄 Changes: {changes_summary}")
+            print(f"💾 Updated: {doc_path}")
+        
+        return 0
+    except Exception as e:
+        print(f"❌ Error refining idea: {e}")
+        import traceback
+        traceback.print_exc()
+        return 1
+
+
 def main() -> int:
     """Main entry point for unified CLI."""
     parser = create_main_parser()
@@ -262,6 +352,8 @@ def main() -> int:
             return run_chat()
         elif args.command == "ideas":
             return run_ideas(args)
+        elif args.command == "refine":
+            return run_refine(args)
     except Exception as e:
         print(f"Configuration/Initialization Error: {e}")
         return 1

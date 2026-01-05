@@ -6,6 +6,7 @@ from typing import Optional
 from ideas.signatures import (
     GenerateAppIdea,
     GenerateLiteAppIdea,
+    RefineAppIdea,
     ValidateAppIdea,
 )
 
@@ -152,3 +153,34 @@ class IdeaValidator(dspy.Module):
             app_idea=app_idea,
             required_complexity=required_complexity,
         )
+
+
+class IdeaRefiner(dspy.Module):
+    """Module for refining existing app ideas based on feedback."""
+    
+    def __init__(self):
+        super().__init__()
+        self.refine = dspy.ChainOfThought(RefineAppIdea)
+    
+    def forward(
+        self,
+        original_document: str,
+        feedback: str,
+        full_regeneration: bool = False,
+    ) -> dspy.Prediction:
+        """Refine an app idea based on user feedback.
+        
+        Args:
+            original_document: Original markdown document
+            feedback: User feedback
+            full_regeneration: Whether to regenerate entire document
+            
+        Returns:
+            DSPy Prediction with refined document and changes summary
+        """
+        return self.refine(
+            original_document=original_document,
+            feedback=feedback,
+            full_regeneration='yes' if full_regeneration else 'no',
+        )
+

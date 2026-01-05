@@ -5,7 +5,7 @@ from typing import Optional
 
 import dspy
 from ideas.models import AppIdea, IdeaRequest, LiteAppIdea
-from ideas.modules import IdeaGenerator, IdeaValidator, LiteIdeaGenerator
+from ideas.modules import IdeaGenerator, IdeaRefiner, IdeaValidator, LiteIdeaGenerator
 from ideas.parsers import parse_app_idea, parse_lite_app_idea
 
 
@@ -252,3 +252,76 @@ class LiteAppIdeaGenerator:
             print("="*80 + "\n")
         
         return idea
+
+
+class IdeaRefinerOrchestrator:
+    """Orchestrator for refining app ideas based on user feedback."""
+    
+    def __init__(self):
+        """Initialize the refiner."""
+        self.refiner = IdeaRefiner()
+    
+    def refine(
+        self,
+        document_path: str,
+        feedback: str,
+        full_regeneration: bool = False,
+        verbose: bool = False,
+        debug: bool = False,
+    ) -> tuple[str, str]:
+        """Refine an existing idea document.
+        
+        Args:
+            document_path: Path to the document to refine
+            feedback: User feedback
+            full_regeneration: Whether to regenerate entire document
+            verbose: Print refinement progress
+            debug: Show DSPy prompt history
+            
+        Returns:
+            Tuple of (refined_content, changes_summary)
+            
+        Raises:
+            FileNotFoundError: If document doesn't exist
+            ValueError: If refinement fails
+        """
+        # Load document
+        from pathlib import Path
+        doc_path = Path(document_path)
+        if not doc_path.exists():
+            raise FileNotFoundError(f"Document not found: {document_path}")
+        
+        original_content = doc_path.read_text()
+        
+        if verbose:
+            print(f"\n🔄 Refining idea: {doc_path.name}")
+            print(f"📝 Feedback: {feedback}")
+            mode = "full regeneration" if full_regeneration else "selective update"
+            print(f"🎯 Mode: {mode}")
+        
+        # Refine
+        prediction = self.refiner(
+            original_document=original_content,
+            feedback=feedback,
+            full_regeneration=full_regeneration,
+        )
+        
+        if debug:
+            print("\n" + "="*80)
+            print("DSPy Prompt History (Refinement)")
+            print("="*80)
+            dspy.inspect_history(n=1)
+            print("="*80 + "\n")
+        
+        refined_content = prediction.refined_document
+        changes_summary = prediction.changes_summary
+        
+        # Save refined document (in-place replacement)
+        doc_path.write_text(refined_content)
+        
+        if verbose:
+            print(f"✅ Refinement complete!")
+            print(f"📄 Changes: {changes_summary}")
+            print(f"💾 Saved to: {document_path}")
+        
+        return refined_content, changes_summary

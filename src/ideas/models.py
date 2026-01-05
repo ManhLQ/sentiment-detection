@@ -78,6 +78,27 @@ class IdeaRequest(BaseModel):
     )
 
 
+class RefinementRequest(BaseModel):
+    """Input model for idea refinement request."""
+    
+    document_content: str = Field(
+        ...,
+        description="Original document content to refine",
+    )
+    
+    feedback: str = Field(
+        ...,
+        description="User feedback describing what to improve",
+        min_length=5,
+        max_length=2000,
+    )
+    
+    full_regeneration: bool = Field(
+        default=False,
+        description="If True, regenerate entire document; if False, only update mentioned sections",
+    )
+
+
 class Feature(BaseModel):
     """A single feature of the app."""
     
