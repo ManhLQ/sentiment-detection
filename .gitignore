@@ -45,6 +45,8 @@ htmlcov/
 
 # Output files
 *_analyzed.csv
+output/
+
 
 # OS
 .DS_Store

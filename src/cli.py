@@ -60,6 +60,47 @@ def create_main_parser() -> argparse.ArgumentParser:
     )
     # No specific args for chat for now, but we can add model override later
     
+    # Ideas Generator Subparser
+    ideas_parser = subparsers.add_parser(
+        "ideas",
+        help="Generate app ideas based on domain and constraints"
+    )
+    ideas_parser.add_argument(
+        "--domain", "-d",
+        required=True,
+        help="Domain or seed idea (e.g., 'project management', 'fitness tracking')"
+    )
+    ideas_parser.add_argument(
+        "--complexity", "-c",
+        choices=["low", "medium", "high"],
+        default="medium",
+        help="Complexity level (default: medium)"
+    )
+    ideas_parser.add_argument(
+        "--requirements", "-r",
+        help="Additional requirements or constraints"
+    )
+    ideas_parser.add_argument(
+        "--format", "-f",
+        choices=["json", "markdown", "terminal"],
+        default="terminal",
+        help="Output format (default: terminal)"
+    )
+    ideas_parser.add_argument(
+        "--output", "-o",
+        help="Output file path (optional, default: print to stdout)"
+    )
+    ideas_parser.add_argument(
+        "--verbose", "-v",
+        action="store_true",
+        help="Show generation progress and validation details"
+    )
+    ideas_parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Show DSPy prompt history for each generation step"
+    )
+    
     return parser
 
 def run_sentiment_miner(args) -> int:
@@ -78,6 +119,91 @@ def run_chat() -> int:
         return 0
     except Exception as e:
         print(f"Error in chat: {e}")
+        return 1
+
+def run_ideas(args) -> int:
+    """Import and run the ideas generator."""
+    try:
+        from ideas import (
+            AppIdeaGenerator,
+            ComplexityLevel,
+            IdeaRequest,
+            format_as_colored_text,
+            format_as_json,
+            format_as_markdown,
+            save_to_file,
+        )
+        
+        # Create request from args
+        request = IdeaRequest(
+            domain=args.domain,
+            complexity=ComplexityLevel(args.complexity),
+            additional_requirements=args.requirements,
+        )
+        
+        # Generate idea
+        generator = AppIdeaGenerator()
+        idea, metadata = generator.generate_with_validation(
+            request,
+            verbose=args.verbose,
+            debug=args.debug,
+        )
+        
+        # Format output
+        if args.format == "json":
+            output = format_as_json(idea)
+            file_ext = "json"
+        elif args.format == "markdown":
+            output = format_as_markdown(idea)
+            file_ext = "md"
+        else:  # terminal
+            output = format_as_colored_text(idea)
+            file_ext = "md"  # Still save as markdown even for terminal display
+        
+        # Always save to output folder with app name
+        import os
+        import re
+        from pathlib import Path
+        
+        # Create output directory if it doesn't exist
+        output_dir = Path("output")
+        output_dir.mkdir(exist_ok=True)
+        
+        # Sanitize app name for filename (remove special chars, replace spaces with underscores)
+        safe_name = re.sub(r'[^\w\s-]', '', idea.name)
+        safe_name = re.sub(r'[-\s]+', '_', safe_name).strip('_').lower()
+        
+        # Generate filename
+        auto_filename = output_dir / f"{safe_name}.{file_ext}"
+        
+        # Save markdown version to output folder
+        markdown_output = format_as_markdown(idea)
+        markdown_filename = output_dir / f"{safe_name}.md"
+        save_to_file(markdown_output, str(markdown_filename))
+        
+        # Also save to user-specified output if provided
+        if args.output:
+            save_to_file(output, args.output)
+            print(f"\n✅ Idea saved to: {args.output}")
+            print(f"📁 Also saved to: {markdown_filename}")
+        else:
+            # Just print to terminal
+            print(output)
+            print(f"\n📁 Idea saved to: {markdown_filename}")
+        
+        # Show metadata if verbose
+        if args.verbose:
+            print(f"\n📊 Generation metadata:")
+            print(f"  Attempts: {metadata['attempts']}")
+            print(f"  Validation passed: {metadata['validation_passed']}")
+            if metadata['issues']:
+                print(f"  Issues: {metadata['issues']}")
+        
+        return 0
+    except Exception as e:
+        print(f"Error generating idea: {e}")
+        import traceback
+        traceback.print_exc()
         return 1
 
 def main() -> int:
@@ -100,6 +226,8 @@ def main() -> int:
             return run_sentiment_miner(args)
         elif args.command == "chat":
             return run_chat()
+        elif args.command == "ideas":
+            return run_ideas(args)
     except Exception as e:
         print(f"Configuration/Initialization Error: {e}")
         return 1

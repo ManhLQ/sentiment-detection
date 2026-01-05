@@ -15,6 +15,7 @@ authors = [
 dependencies = [
     "dspy>=2.5.0",
     "pandas>=2.0.0",
+    "pydantic>=2.12.5",
     "python-dotenv>=1.0.0",
 ]
 
